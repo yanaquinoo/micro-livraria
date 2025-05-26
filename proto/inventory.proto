@@ -1,20 +1,37 @@
 syntax = "proto3";
 
+package inventory;
+
+import "google/protobuf/empty.proto";
+
+/* ==============  DATA MODELS  ============== */
+
+/** Identificador de produto para buscas pontuais */
+message ProductId {
+  int32 value = 1;  // ex.: 42
+}
+
+/** Entidade principal de domínio */
+message Product {
+  int32  id       = 1;
+  string name     = 2;
+  int32  quantity = 3;
+  float  price    = 4;
+  string photo    = 5;
+  string author   = 6;
+}
+
+/** Listagem de produtos */
+message ProductList {
+  repeated Product products = 1;
+}
+
+/* ==============  SERVICE DEFINITION  ============== */
+
 service InventoryService {
-    rpc SearchAllProducts(Empty) returns (ProductsResponse) {}
-}
+  /** Retorna todos os produtos */
+  rpc ListProducts  (google.protobuf.Empty) returns (ProductList);
 
-message Empty{}
-
-message ProductResponse {
-    int32 id = 1;
-    string name = 2;
-    int32 quantity = 3;
-    float price = 4;
-    string photo = 5;
-    string author = 6;
-}
-
-message ProductsResponse {
-    repeated ProductResponse products = 1;
+  /** Consulta por ID */
+  rpc GetProduct    (ProductId)             returns (Product);
 }
